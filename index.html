@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Event Management System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #99a7c8;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        #app {
+            width: 100%;
+            max-width: 500px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #007bff;
+        }
+
+        form label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+
+        input,
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            border: none;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <!-- Login Form -->
+        <section id="login-section">
+            <h1>Login</h1>
+            <form id="login-form">
+                <label for="username">Username:</label>
+                <input type="text" id="username" required />
+
+                <label for="password">Password:</label>
+                <input type="password" id="password" required />
+
+                <button type="submit">Login</button>
+            </form>
+        </section>
+
+        <!-- Main Dashboard -->
+        <section id="dashboard" style="display: none;">
+            <h1>Welcome to Event Management System</h1>
+            <button onclick="showForm('entry-section')">Add Event</button>
+            <button onclick="showForm('display-section')">View Events</button>
+            <button onclick="logout()">Logout</button>
+        </section>
+
+        <!-- Entry Form -->
+        <section id="entry-section" style="display: none;">
+            <h1>Add Event</h1>
+            <form id="event-form">
+                <label for="event-name">Event Name:</label>
+                <input type="text" id="event-name" required />
+
+                <label for="faculty-name">Faculty Name:</label>
+                <input type="text" id="faculty-name" required />
+
+                <label for="event-date">Event Date:</label>
+                <input type="date" id="event-date" required />
+
+                <button type="submit">Submit Event</button>
+            </form>
+            <button onclick="showForm('dashboard')">Back to Dashboard</button>
+        </section>
+
+        <!-- Display Form -->
+        <section id="display-section" style="display: none;">
+            <h1>Event List</h1>
+            <ul id="event-list"></ul>
+            <button onclick="showForm('dashboard')">Back to Dashboard</button>
+        </section>
+    </div>
+
+    <script>
+        const events = [];
+
+        // Handle login
+        document.getElementById('login-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            if (username === 'admin' && password === 'admin123') {
+                alert('Login successful!');
+                showForm('dashboard');
+
+                // Clear fields
+                document.getElementById('username').value = '';
+                document.getElementById('password').value = '';
+
+                // Trigger save password prompt (Browser will handle it)
+                document.getElementById('password').blur();
+            } else {
+                alert('Invalid credentials!');
+
+                // Clear fields after failed attempt
+                document.getElementById('username').value = '';
+                document.getElementById('password').value = '';
+            }
+        });
+
+        // Handle event submission
+        document.getElementById('event-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const eventName = document.getElementById('event-name').value;
+            const facultyName = document.getElementById('faculty-name').value;
+            const eventDate = document.getElementById('event-date').value;
+
+            events.push({ eventName, facultyName, eventDate });
+            alert('Event added successfully!');
+            showForm('dashboard');
+
+            // Clear form after submission
+            document.getElementById('event-name').value = '';
+            document.getElementById('faculty-name').value = '';
+            document.getElementById('event-date').value = '';
+        });
+
+        // Show and switch forms
+        function showForm(sectionId) {
+            document.getElementById('login-section').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'none';
+            document.getElementById('entry-section').style.display = 'none';
+            document.getElementById('display-section').style.display = 'none';
+
+            document.getElementById(sectionId).style.display = 'block';
+
+            // Display Events
+            if (sectionId === 'display-section') {
+                const eventList = document.getElementById('event-list');
+                eventList.innerHTML = '';
+                if (events.length === 0) {
+                    eventList.innerHTML = '<li>No events added yet.</li>';
+                } else {
+                    events.forEach(event => {
+                        const li = document.createElement('li');
+                        li.textContent = `${event.eventName} - ${event.facultyName} on ${event.eventDate}`;
+                        eventList.appendChild(li);
+                    });
+                }
+            }
+        }
+
+        // Handle logout
+        function logout() {
+            alert('Logged out successfully!');
+            showForm('login-section');
+        }
+    </script>
+</body>
+
+</html>
